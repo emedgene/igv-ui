@@ -6011,7 +6011,18 @@ const httpMessages =
 
 
 class AlertDialog {
-    constructor(parent) {
+    /**
+     * Initialize a new alert dialog
+     * @param parent
+     * @param alertProps - Optional - properties such as scroll to error
+     */
+    constructor(parent, alertProps) {
+        this.alertProps = {
+            /** When an alert is presented - focus occur */
+            shouldFocus: true,
+            /** When focus occur - scroll into that element in the view */
+            preventScroll:false,
+            ...alertProps};
 
         // container
         this.container = div({class: "igv-ui-alert-dialog-container"});
@@ -6086,7 +6097,11 @@ class AlertDialog {
         this.body.innerHTML = string;
         this.callback = callback;
         show(this.container);
-        this.container.focus();
+        if (this.alertProps.shouldFocus) {
+            this.container.focus(
+                { preventScroll: this.alertProps.preventScroll }
+            );
+        }
     }
 }
 
@@ -6116,9 +6131,9 @@ let alertDialog;
 
 const Alert = {
 
-    init(root) {
+    init(root, settings) {
         if (!alertDialog) {
-            alertDialog = new AlertDialog(root);
+            alertDialog = new AlertDialog(root, settings);
         }
     },
 
